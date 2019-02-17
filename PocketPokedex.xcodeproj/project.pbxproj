@@ -90,9 +90,9 @@
 			isa = PBXGroup;
 			children = (
 				CEC3E90D2218BB65002035D0 /* PokedexTableViewController.swift */,
+				CEE738E72218DF3900DB9E97 /* statstableview.swift */,
 				CEC3E90F2218BB81002035D0 /* PokedexViewController.swift */,
 				CEE738DE2218C5FD00DB9E97 /* HomeViewController.swift */,
-				CEE738E72218DF3900DB9E97 /* statstableview.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";

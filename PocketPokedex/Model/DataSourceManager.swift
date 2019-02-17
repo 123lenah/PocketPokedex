@@ -11,11 +11,16 @@ import Foundation
 class DataSourceManager {
 
     
-    static func get_pokemon_data(pokemon: String, completion: @escaping (Pokemon) -> Void) {
-        if let url = URL(string: "https://pokeapi.co/api/v2/pokemon/\(pokemon)/") {
+    static func get_pokemon_data(pokemon: String, completion: @escaping (Pokemon, Bool) -> Void) {
+        if let url = URL(string: "https://pokeapi.co/api/v2/pokemon/\(pokemon.lowercased())/") {
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task = session.dataTask(with: request) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse {
+                if httpResponse.statusCode == 404 {
+                    return completion(Pokemon(types: [], abilities: [], stats: Dictionary<String,Int>(), moves: []), false)
+                }
+            }
             // This will run when the network request returns
             if let error = error {
                 print(error.localizedDescription)
@@ -59,7 +64,7 @@ class DataSourceManager {
                 
                 
                 let p = Pokemon(types: type_list, abilities: abilities_list, stats: stats_dict, moves: moves_list)
-                return completion(p)
+                return completion(p, true)
     
     
                 }

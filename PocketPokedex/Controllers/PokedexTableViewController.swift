@@ -16,18 +16,25 @@ class PokedexTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        DataSourceManager.get_pokemon_data(pokemon: user_input!) { (p) in
-            if self.selection == "types" {
-                self.data_list = p.types
-                print(self.data_list)
+        DataSourceManager.get_pokemon_data(pokemon: user_input!) { (p, isValid) in
+            if isValid == false {
+                // create alert
+                let alert = UIAlertController(title: "Alert", message: "The pokemon you entered is not a valid pokemon or doesn't exist!", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "Okay", style: UIAlertAction.Style.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                if self.selection == "types" {
+                    self.data_list = p.types
+                    print(self.data_list)
+                }
+                else if self.selection == "moves" {
+                    self.data_list = p.moves
+                }
+                else if self.selection == "abilities" {
+                    self.data_list = p.abilities
+                }
+                self.tableView.reloadData()
             }
-            else if self.selection == "moves" {
-                self.data_list = p.moves
-            }
-            else if self.selection == "abilities" {
-                self.data_list = p.abilities
-            }
-            self.tableView.reloadData()
         }
 
         // Uncomment the following line to preserve selection between presentations

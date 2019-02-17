@@ -9,18 +9,29 @@
 import UIKit
 
 class statstableview: UITableViewController {
-
+    var isValid: Bool!
     var data_dict = Dictionary<String, Int>()
     var user_input: String!
     var pokemon: Pokemon?
     var selection: String!
+    var validPokemon = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        DataSourceManager.get_pokemon_data(pokemon: user_input!) { (p) in
-            self.data_dict = p.stats
-            self.tableView.reloadData()
+        DataSourceManager.get_pokemon_data(pokemon: user_input!) { (p, isValid) in
+            if isValid == false {
+                self.validPokemon = false
+                
+            } else  {
+                self.data_dict = p.stats
+                self.tableView.reloadData()
+            }
+            
+            if isValid == false {
+                let alert = UIAlertController(title: "Alert", message: "The pokemon you entered is not a valid pokemon or doesn't exist!", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "Okay", style: UIAlertAction.Style.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
 
         // Uncomment the following line to preserve selection between presentations
@@ -28,6 +39,7 @@ class statstableview: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
     }
 
     // MARK: - Table view data source
@@ -44,20 +56,26 @@ class statstableview: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //let cell = tableView.dequeueReusableCell(style: UITableViewCell.CellStyle.Value2, withIdentifier: "reuseidentifier", for: indexPath)
+        // create alert
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.value2, reuseIdentifier: "reuseidentifier")
-        let name_array = Array(data_dict.keys)
-        let base_array_int = Array(data_dict.values)
         
-        var base_array_string = [String]()
-        for base in base_array_int {
-            base_array_string.append(String(base))
+        if validPokemon == false {
+            let alert = UIAlertController(title: "Alert", message: "The pokemon you entered is not a valid pokemon or doesn't exist!", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Okay", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        } else {
+            let name_array = Array(data_dict.keys)
+            let base_array_int = Array(data_dict.values)
+            
+            var base_array_string = [String]()
+            for base in base_array_int {
+                base_array_string.append(String(base))
+            }
+            
+            cell.textLabel?.text = name_array[indexPath.row]
+            cell.detailTextLabel?.text = base_array_string[indexPath.row]
         }
-        
-        cell.textLabel?.text = name_array[indexPath.row]
-        cell.detailTextLabel?.text = base_array_string[indexPath.row]
 
-        // Configure the cell...
 
         return cell
     }
